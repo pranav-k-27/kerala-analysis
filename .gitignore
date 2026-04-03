@@ -29,9 +29,9 @@ frontend/.vite/
 
 # ── Pipeline reports & summaries ────────────────────
 # These are generated — don't commit large JSON files
-pipeline/reports/
+#pipeline/reports/
 pipeline/summaries/
-reports/
+#reports/
 
 # ── Python virtual environments ──────────────────────
 venv/
