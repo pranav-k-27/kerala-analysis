@@ -186,7 +186,10 @@ export default function SwingPredictionEngine(){
       const data=await resp.json();
       clearInterval(msgId);
       if(data.error)throw new Error(data.error.message);
-      const parsed = JSON.parse(data.choices[0].message.content.trim());
+
+      const raw = data.choices[0].message.content.trim();
+      const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(cleaned);
       setResult(parsed);
     }catch(e){
       clearInterval(msgId);
