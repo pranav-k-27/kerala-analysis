@@ -403,12 +403,17 @@ export default function KeralaCMap(){
   const [filterRisk,setFilterRisk] = useState("ALL");
   const [search,setSearch]       = useState("");
 
-  const fetchSeats = useCallback(async()=>{
-    try{
-      const h=await fetch(`${API}/api/health`,{signal:AbortSignal.timeout(3000)});
-      if(!h.ok) throw new Error();
+  const fetchSeats = useCallback(async () => {
+    try {
+      const h = await fetch(`${API}/api/health`, {
+        signal: AbortSignal.timeout(3000),
+        headers: { "ngrok-skip-browser-warning": "true" }
+      });
+      if (!h.ok) throw new Error();
       setApiOk(true);
-      const res=await fetch(`${API}/api/constituencies`);
+      const res = await fetch(`${API}/api/constituencies`, {
+        headers: { "ngrok-skip-browser-warning": "true" }
+      });
       if(res.ok){
         const data=await res.json();
         setSeats(data.seats||[]);

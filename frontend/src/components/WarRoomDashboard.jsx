@@ -169,24 +169,31 @@ export default function WarRoomDashboard(){
   const TABS = ["overview","districts","swing seats","strategy","leaders"];
 
   const fetchLive = useCallback(async()=>{
-    try{
-      const h=await fetch(`${API}/api/health`,{signal:AbortSignal.timeout(3000)});
-      if(!h.ok) throw new Error();
-      setApiOk(true);
-      const rr=await fetch(`${API}/api/latest-report`);
-      if(rr.ok){
-        const data=await rr.json();
-        setReport(data);
-        if(data.constituency_scores?.length>0){setScores(data.constituency_scores);setIsLive(true);}
-        setLastSync(new Date());
-      }
-      const cr=await fetch(`${API}/api/constituencies`);
-      if(cr.ok){
-        const cd=await cr.json();
-        if(cd.seats?.length>0){setScores(cd.seats);setIsLive(true);}
-      }
-    }catch{setApiOk(false);}
-  },[]);
+      try{
+        const h=await fetch(`${API}/api/health`,{
+          signal:AbortSignal.timeout(3000),
+          headers:{"ngrok-skip-browser-warning":"true"}
+        });
+        if(!h.ok) throw new Error();
+        setApiOk(true);
+        const rr=await fetch(`${API}/api/latest-report`,{
+          headers:{"ngrok-skip-browser-warning":"true"}
+        });
+        if(rr.ok){
+          const data=await rr.json();
+          setReport(data);
+          if(data.constituency_scores?.length>0){setScores(data.constituency_scores);setIsLive(true);}
+          setLastSync(new Date());
+        }
+        const cr=await fetch(`${API}/api/constituencies`,{
+          headers:{"ngrok-skip-browser-warning":"true"}
+        });
+        if(cr.ok){
+          const cd=await cr.json();
+          if(cd.seats?.length>0){setScores(cd.seats);setIsLive(true);}
+        }
+      }catch{setApiOk(false);}
+    },[]);
 
   useEffect(()=>{fetchLive();const id=setInterval(fetchLive,60000);return()=>clearInterval(id);},[fetchLive]);
 

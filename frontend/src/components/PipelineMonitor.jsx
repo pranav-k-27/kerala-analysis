@@ -305,43 +305,48 @@ export default function PipelineMonitor(){
   // ── Fetch ────────────────────────────────────────────────
 
   const fetchAll = useCallback(async()=>{
-    try{
-      const h=await fetch(`${API}/api/health`,{signal:AbortSignal.timeout(3000)});
-      if(!h.ok) throw new Error();
-      setApiOk(true);
-      const [rr,lr,sr]=await Promise.all([
-        fetch(`${API}/api/latest-report`),
-        fetch(`${API}/api/reports`),
-        fetch(`${API}/api/pipeline/status`),
-      ]);
-      if(rr.ok) setReport(await rr.json());
-      if(lr.ok){const d=await lr.json();setReports(d.reports||[]);}
-      if(sr.ok) setPipeStatus(await sr.json());
-      setLastSync(new Date());
-    }catch{setApiOk(false);}
-  },[]);
+      try{
+        const h=await fetch(`${API}/api/health`,{
+          signal:AbortSignal.timeout(3000),
+          headers:{"ngrok-skip-browser-warning":"true"}
+        });
+        if(!h.ok) throw new Error();
+        setApiOk(true);
+        const [rr,lr,sr]=await Promise.all([
+          fetch(`${API}/api/latest-report`,{headers:{"ngrok-skip-browser-warning":"true"}}),
+          fetch(`${API}/api/reports`,{headers:{"ngrok-skip-browser-warning":"true"}}),
+          fetch(`${API}/api/pipeline/status`,{headers:{"ngrok-skip-browser-warning":"true"}}),
+        ]);
+        if(rr.ok) setReport(await rr.json());
+        if(lr.ok){const d=await lr.json();setReports(d.reports||[]);}
+        if(sr.ok) setPipeStatus(await sr.json());
+        setLastSync(new Date());
+      }catch{setApiOk(false);}
+    },[]);
 
-  useEffect(()=>{
-    fetchAll();
-    const id=setInterval(fetchAll,30000);
-    return()=>clearInterval(id);
-  },[fetchAll]);
+    useEffect(()=>{
+      fetchAll();
+      const id=setInterval(fetchAll,30000);
+      return()=>clearInterval(id);
+    },[fetchAll]);
 
-  useEffect(()=>{
-    if(logRef.current) logRef.current.scrollTop=logRef.current.scrollHeight;
-  },[pipeStatus?.log]);
+    useEffect(()=>{
+      if(logRef.current) logRef.current.scrollTop=logRef.current.scrollHeight;
+    },[pipeStatus?.log]);
 
-  // ── Trigger real run ──────────────────────────────────────
+    // ── Trigger real run ──────────────────────────────────────
 
-  const triggerRun=async()=>{
-    if(!apiOk||triggering) return;
-    setTriggering(true);
-    try{
-      await fetch(`${API}/api/pipeline/run`,{method:"POST"});
-      setTimeout(fetchAll,2000);
-    }finally{setTriggering(false);}
-  };
-
+    const triggerRun=async()=>{
+      if(!apiOk||triggering) return;
+      setTriggering(true);
+      try{
+        await fetch(`${API}/api/pipeline/run`,{
+          method:"POST",
+          headers:{"ngrok-skip-browser-warning":"true"}
+        });
+        setTimeout(fetchAll,2000);
+      }finally{setTriggering(false);}
+    };
   // ── Simulate ──────────────────────────────────────────────
 
   const simulate=async()=>{

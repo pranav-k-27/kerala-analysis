@@ -7,7 +7,7 @@ const T = {
   text:"#D8EAF8", dim:"#2A4A6A", dark:"#050C1A",
 };
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API = "http://localhost:8000";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -310,13 +310,17 @@ export default function MalayalamNewsFeed() {
 
   const fetchData = useCallback(async () => {
     try {
-      const h = await fetch(`${API}/api/health`,
-        { signal: AbortSignal.timeout(3000) });
+      const h = await fetch(`${API}/api/health`, {
+        signal: AbortSignal.timeout(3000),
+        headers: { "ngrok-skip-browser-warning": "true" }
+      });
       if (!h.ok) throw new Error();
       setApiOk(true);
 
       setLoading(true);
-      const res = await fetch(`${API}/api/malayalam/latest`);
+      const res = await fetch(`${API}/api/malayalam/latest`, {
+        headers: { "ngrok-skip-browser-warning": "true" }
+      });
       if (res.ok) {
         setData(await res.json());
         setLastSync(new Date());
@@ -338,7 +342,10 @@ export default function MalayalamNewsFeed() {
   const triggerFetch = async () => {
     setFetching(true);
     try {
-      await fetch(`${API}/api/malayalam/fetch`, { method: "POST" });
+      await fetch(`${API}/api/malayalam/fetch`, {
+        method: "POST",
+        headers: { "ngrok-skip-browser-warning": "true" }
+      });
       // Poll until data appears
       let attempts = 0;
       const poll = setInterval(async () => {
@@ -350,6 +357,7 @@ export default function MalayalamNewsFeed() {
       setFetching(false);
     }
   };
+
 
   // ── Filter articles ──────────────────────────────────────────
 
