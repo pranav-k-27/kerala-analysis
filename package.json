@@ -1,0 +1,17 @@
+{
+  "name": "kerala-warroom-2026",
+  "version": "1.0.0",
+  "description": "Kerala 2026 Assembly Elections — AI-Powered Political War Room",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "install:all": "cd frontend && npm install",
+    "pipeline:install": "pip install -r pipeline/requirements.txt",
+    "pipeline:run": "cd pipeline && python kerala_intelligence_pipeline.py --run-now",
+    "pipeline:schedule": "cd pipeline && python kerala_intelligence_pipeline.py --schedule 06:00",
+    "start": "npm run dev"
+  },
+  "author": "Kerala 2026 UDF War Room",
+  "license": "UNLICENSED"
+}

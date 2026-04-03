@@ -1,0 +1,45 @@
+# ════════════════════════════════════════════════════
+# KERALA WAR ROOM 2026 — Render Deployment Config
+# ════════════════════════════════════════════════════
+
+services:
+
+  # ── 1. FastAPI Backend ───────────────────────────
+  - type: web
+    name: kerala-warroom-api
+    runtime: python
+    rootDir: pipeline
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false          # Set manually in Render dashboard
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    disk:
+      name: reports-storage
+      mountPath: /opt/render/project/src/pipeline/reports
+      sizeGB: 1
+
+  # ── 2. React Frontend (Static Site) ─────────────
+  - type: web
+    name: kerala-warroom-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false          # Set to your API URL after backend deploys
+
+  # ── 3. Pipeline Cron Job (daily run) ────────────
+  - type: cron
+    name: kerala-warroom-pipeline
+    runtime: python
+    rootDir: pipeline
+    buildCommand: pip install -r requirements.txt
+    schedule: "0 6 * * *"   # 6 AM IST daily (0:30 UTC)
+    startCommand: python kerala_intelligence_pipeline.py --run-now
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false

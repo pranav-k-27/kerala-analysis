@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🗳️ War Room Frontend (Vite)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/frontend/node_modules/.bin/vite",
+      "args": ["--open"],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "runtimeExecutable": "node"
+    },
+    {
+      "name": "⚙️ Intelligence Pipeline (Run Now)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/pipeline/kerala_intelligence_pipeline.py",
+      "args": ["--run-now"],
+      "cwd": "${workspaceFolder}/pipeline",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "📅 Intelligence Pipeline (Daily Schedule)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/pipeline/kerala_intelligence_pipeline.py",
+      "args": ["--schedule", "06:00"],
+      "cwd": "${workspaceFolder}/pipeline",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🚀 Full War Room (Frontend + Pipeline)",
+      "configurations": [
+        "🗳️ War Room Frontend (Vite)",
+        "⚙️ Intelligence Pipeline (Run Now)"
+      ],
+      "stopAll": true
+    }
+  ]
+}
